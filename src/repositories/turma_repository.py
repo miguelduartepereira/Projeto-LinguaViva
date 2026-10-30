@@ -45,6 +45,27 @@ class TurmaRepository:
                 for linha in linhas
             ]
 
+    def contar_matriculas_ativas(self, turma_id: int) -> int:
+        with get_connection() as conn:
+            linha = conn.execute(
+                "SELECT COUNT(*) AS total FROM Matricula "
+                "WHERE turma_id = ? AND estado = 'ativa'",
+                (turma_id,),
+            ).fetchone()
+            return linha["total"]
+
+    def listar_por_professor(self, professor_id: int) -> list[Turma]:
+        with get_connection() as conn:
+            linhas = conn.execute(
+                "SELECT * FROM Turma WHERE professor_id = ? ORDER BY ano, semestre",
+                (professor_id,),
+            ).fetchall()
+            return [self._mapear(linha) for linha in linhas]
+
+    def desativar(self, turma_id: int) -> None:
+        with get_connection() as conn:
+            conn.execute("UPDATE Turma SET ativa = 0 WHERE id = ?", (turma_id,))
+
     def _mapear(self, linha) -> Turma:
         return Turma(
             id=linha["id"],

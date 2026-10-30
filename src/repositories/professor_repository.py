@@ -43,6 +43,12 @@ class ProfessorRepository:
             ).fetchall()
             return [linha["idioma_id"] for linha in linhas]
 
+    def desativar(self, professor_id: int) -> None:
+        with get_connection() as conn:
+            conn.execute(
+                "UPDATE Professor SET ativo = 0 WHERE id = ?", (professor_id,)
+            )
+
     def _mapear(self, linha) -> Professor:
         return Professor(
             id=linha["id"],

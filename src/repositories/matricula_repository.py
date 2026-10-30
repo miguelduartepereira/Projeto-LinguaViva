@@ -109,6 +109,15 @@ class MatriculaRepository:
                 ficheiroPdf=linha["ficheiro_pdf"],
             )
 
+    def atualizar_certificado(self, certificado_id: int, numero: str,
+                              ficheiro_pdf: str) -> None:
+        with get_connection() as conn:
+            conn.execute(
+                "UPDATE Certificado SET numero_certificado = ?, ficheiro_pdf = ? "
+                "WHERE id = ?",
+                (numero, ficheiro_pdf, certificado_id),
+            )
+
     def _mapear(self, linha) -> Matricula:
         return Matricula(
             id=linha["id"],
