@@ -16,3 +16,9 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+
+#Word
+*.docx
+
+#zip
+*.zip

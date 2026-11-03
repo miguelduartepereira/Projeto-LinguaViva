@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from db.connection import get_connection
 from models.turma import Turma
+from repositories.idioma_repository import IdiomaRepository
+from repositories.nivel_repository import NivelRepository
+from repositories.professor_repository import ProfessorRepository
 
 
 class TurmaRepository:
@@ -67,7 +70,7 @@ class TurmaRepository:
             conn.execute("UPDATE Turma SET ativa = 0 WHERE id = ?", (turma_id,))
 
     def _mapear(self, linha) -> Turma:
-        return Turma(
+        turma = Turma(
             id=linha["id"],
             horario=linha["horario"],
             sala=linha["sala"],
@@ -76,3 +79,10 @@ class TurmaRepository:
             ano=linha["ano"],
             ativa=bool(linha["ativa"]),
         )
+        if linha["idioma_id"]:
+            turma._idioma = IdiomaRepository().obter_por_id(linha["idioma_id"])
+        if linha["nivel_id"]:
+            turma._nivel = NivelRepository().obter_por_id(linha["nivel_id"])
+        if linha["professor_id"]:
+            turma._professor = ProfessorRepository().obter_por_id(linha["professor_id"])
+        return turma

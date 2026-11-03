@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Idioma (
     codigo  TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS  Nivel (
+CREATE TABLE IF NOT EXISTS Nivel (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
     codigo               TEXT NOT NULL UNIQUE,
     descricao            TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS  Nivel (
     CHECK (ponderacao_oral + ponderacao_escrito + ponderacao_projeto = 1)
 );
 
-CREATE TABLE Aluno (
+CREATE TABLE IF NOT EXISTS Aluno (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     nome                TEXT    NOT NULL,
     nif                 TEXT    UNIQUE,
@@ -49,7 +49,7 @@ CREATE TABLE Aluno (
     FOREIGN KEY (enc_educacao_id) REFERENCES EncarregadoEducacao (id)
 );
 
-CREATE TABLE ProfessorIdioma (
+CREATE TABLE IF NOT EXISTS ProfessorIdioma (
     professor_id  INTEGER NOT NULL,
     idioma_id     INTEGER NOT NULL,
     PRIMARY KEY (professor_id, idioma_id),
@@ -57,7 +57,7 @@ CREATE TABLE ProfessorIdioma (
     FOREIGN KEY (idioma_id)    REFERENCES Idioma (id)
 );
 
-CREATE TABLE Turma (
+CREATE TABLE IF NOT EXISTS Turma (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     idioma_id     INTEGER NOT NULL,
     nivel_id      INTEGER NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE Turma (
     FOREIGN KEY (professor_id) REFERENCES Professor (id)
 );
 
-CREATE TABLE Matricula (
+CREATE TABLE IF NOT EXISTS Matricula (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     aluno_id       INTEGER NOT NULL,
     turma_id       INTEGER NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE Matricula (
     FOREIGN KEY (turma_id) REFERENCES Turma (id)
 );
 
-CREATE TABLE Aula (
+CREATE TABLE IF NOT EXISTS Aula (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     turma_id      INTEGER NOT NULL,
     professor_id  INTEGER NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE Aula (
     FOREIGN KEY (professor_id) REFERENCES Professor (id)
 );
 
-CREATE TABLE Presenca (
+CREATE TABLE IF NOT EXISTS Presenca (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     aula_id       INTEGER NOT NULL,
     matricula_id  INTEGER NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE Presenca (
     FOREIGN KEY (matricula_id) REFERENCES Matricula (id)
 );
 
-CREATE TABLE Avaliacao (
+CREATE TABLE IF NOT EXISTS Avaliacao (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     matricula_id  INTEGER NOT NULL,
     tipo          TEXT    NOT NULL CHECK (tipo IN ('oral', 'escrito', 'projeto')),
@@ -116,7 +116,7 @@ CREATE TABLE Avaliacao (
     FOREIGN KEY (matricula_id) REFERENCES Matricula (id)
 );
 
-CREATE TABLE Certificado (
+CREATE TABLE IF NOT EXISTS Certificado (
     id                 INTEGER PRIMARY KEY AUTOINCREMENT,
     matricula_id       INTEGER NOT NULL UNIQUE,
     numero_certificado TEXT    NOT NULL UNIQUE,
@@ -125,7 +125,7 @@ CREATE TABLE Certificado (
     FOREIGN KEY (matricula_id) REFERENCES Matricula (id)
 );
 
-CREATE TABLE Utilizador (
+CREATE TABLE IF NOT EXISTS Utilizador (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     username       TEXT    NOT NULL UNIQUE,
     password_hash  TEXT    NOT NULL,

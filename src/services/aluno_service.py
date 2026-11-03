@@ -11,9 +11,9 @@ from repositories.matricula_repository import MatriculaRepository
 class AlunoService:
     IDADE_MAIORIDADE = 18
 
-    def __init__(self):
-        self._repo = AlunoRepository()
-        self._matriculas = MatriculaRepository()
+    def __init__(self, repo=None, matriculas=None):
+        self._repo = repo or AlunoRepository()
+        self._matriculas = matriculas or MatriculaRepository()
 
     def registar(self, aluno: Aluno) -> int:
         self._validar(aluno)

@@ -74,8 +74,10 @@ class MatriculaService:
         certificado = Certificado(0)
         certificado._matricula = matricula
         certificado._dataEmissao = date.today()
+        certificado._numero = f"TMP-{matricula._id}"
         certificado._id = self._repo.inserir_certificado(matricula._id, certificado)
-        certificado.gerarPDF()
+        certificado.gerarNumero()
+        certificado._ficheiroPdf = f"certificado_{certificado._numero}.pdf"
         self._repo.atualizar_certificado(
             certificado._id, certificado._numero, certificado._ficheiroPdf
         )
