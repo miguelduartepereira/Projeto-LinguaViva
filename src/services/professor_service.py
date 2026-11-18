@@ -20,6 +20,22 @@ class ProfessorService:
             self._repo.adicionar_idioma(professor_id, idioma_id)
         return professor_id
 
+    
+    def atualizar(self, professor: Professor, idiomas: list[int] | None = None) -> None:
+
+        if not professor._nome or not professor._nome.strip():
+            raise ValueError("O nome do professor é obrigatório.")
+
+        if professor._custoHora < 0:
+            raise ValueError("O custo por hora não pode ser negativo.")
+
+        if self._repo.obter_por_id(professor._id) is None:
+            raise ValueError("Professor não encontrado.")
+
+        self._repo.atualizar(professor)
+        self._repo.atualizar_idiomas(professor._id, idiomas or [])
+
+
     def associar_idioma(self, professor_id: int, idioma_id: int) -> None:
         if self._repo.obter_por_id(professor_id) is None:
             raise ValueError("Professor não encontrado.")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import tkinter as tk
 from datetime import date
 from pathlib import Path
 
@@ -29,6 +30,7 @@ from services.matricula_service import MatriculaService
 from services.nivel_service import NivelService
 from services.professor_service import ProfessorService
 from services.turma_service import TurmaService
+from interface.janela_entrada import criar_interface
 
 idioma_service = IdiomaService()
 nivel_service = NivelService()
@@ -441,6 +443,9 @@ def menu_encarregado():
 
 def main():
     inicializar_bd()
+    janela = tk.Tk()
+    criar_interface(janela)
+    '''
     print("=== Sistema de Gestao LinguaViva ===")
     loop_menu("Menu Principal", {
         "1": ("Menu Secretaria", menu_secretaria),
@@ -448,6 +453,8 @@ def main():
         "3": ("Menu Direcao", menu_direcao),
         "4": ("Menu Encarregado de Educacao", menu_encarregado),
     }, pausar=False)
+    '''
+    janela.mainloop()
 
 
 if __name__ == "__main__":

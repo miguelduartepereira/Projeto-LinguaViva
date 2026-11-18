@@ -16,12 +16,46 @@ class ProfessorRepository:
             professor._id = cursor.lastrowid
             return professor._id
 
+    def atualizar(self, professor: Professor) -> None:
+        with get_connection() as conn:
+            conn.execute(
+                """
+                UPDATE Professor
+                SET nome = ?, telefone = ?, email = ?, custo_hora = ?
+                WHERE id = ?
+                """,
+                (
+                    professor._nome,
+                    professor._telefone,
+                    professor._email,
+                    professor._custoHora,
+                    professor._id
+                )
+            )
+
     def adicionar_idioma(self, professor_id: int, idioma_id: int) -> None:
         with get_connection() as conn:
             conn.execute(
                 "INSERT INTO ProfessorIdioma (professor_id, idioma_id) VALUES (?, ?)",
                 (professor_id, idioma_id),
             )
+
+    def atualizar_idiomas(self, professor_id: int, idiomas: list[int]) -> None:
+        with get_connection() as conn:
+            conn.execute(
+                "DELETE FROM ProfessorIdioma WHERE professor_id = ?",
+                (professor_id,)
+            )
+
+            for idioma_id in idiomas:
+                conn.execute(
+                    """
+                    INSERT INTO ProfessorIdioma (professor_id, idioma_id)
+                    VALUES (?, ?)
+                    """,
+                    (professor_id, idioma_id)
+                )
+
 
     def obter_por_id(self, id: int) -> Professor | None:
         with get_connection() as conn:

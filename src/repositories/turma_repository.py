@@ -22,6 +22,34 @@ class TurmaRepository:
             turma._id = cursor.lastrowid
             return turma._id
 
+    def atualizar(self, turma: Turma) -> None:
+        with get_connection() as conn:
+            conn.execute(
+                """
+                UPDATE Turma
+                SET idioma_id = ?,
+                    nivel_id = ?,
+                    professor_id = ?,
+                    horario = ?,
+                    sala = ?,
+                    max_alunos = ?,
+                    semestre = ?,
+                    ano = ?
+                WHERE id = ?
+                """,
+                (
+                    turma._idioma._id,
+                    turma._nivel._id,
+                    turma._professor._id,
+                    turma._horario,
+                    turma._sala,
+                    turma._maxAlunos,
+                    turma._semestre,
+                    turma._ano,
+                    turma._id
+                )
+            )
+
     def obter_por_id(self, id: int) -> Turma | None:
         with get_connection() as conn:
             linha = conn.execute("SELECT * FROM Turma WHERE id = ?", (id,)).fetchone()

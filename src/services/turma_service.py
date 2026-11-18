@@ -24,6 +24,27 @@ class TurmaService:
             raise ValueError("O número máximo de alunos tem de estar entre 6 e 12.")
         return self._repo.inserir(turma)
 
+    def atualizar(self, turma: Turma) -> None:
+        if self._repo.obter_por_id(turma._id) is None:
+            raise ValueError("Turma não encontrada.")
+
+        if turma._idioma is None:
+            raise ValueError("A turma tem de ter um idioma.")
+
+        if turma._nivel is None:
+            raise ValueError("A turma tem de ter um nível.")
+
+        if turma._professor is None:
+            raise ValueError("A turma tem de ter um professor.")
+
+        if turma._semestre not in (1, 2):
+            raise ValueError("O semestre tem de ser 1 ou 2.")
+
+        if not (self.MIN_ALUNOS <= turma._maxAlunos <= self.MAX_ALUNOS):
+            raise ValueError("O número máximo de alunos tem de estar entre 6 e 12.")
+
+        self._repo.atualizar(turma)
+
     def obter(self, turma_id: int) -> Turma | None:
         return self._repo.obter_por_id(turma_id)
 
