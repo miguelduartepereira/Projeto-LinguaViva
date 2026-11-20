@@ -6,6 +6,8 @@ from models.avaliacao import Avaliacao
 from models.certificado import Certificado
 from db.connection import get_connection
 from models.matricula import Matricula
+from repositories.aluno_repository import AlunoRepository
+from repositories.turma_repository import TurmaRepository
 
 
 class MatriculaRepository:
@@ -119,10 +121,13 @@ class MatriculaRepository:
             )
 
     def _mapear(self, linha) -> Matricula:
-        return Matricula(
+        matricula = Matricula(
             id=linha["id"],
             dataMatricula=date.fromisoformat(linha["data_matricula"]) if linha["data_matricula"] else None,
             valorPropina=float(linha["valor_propina"]) if linha["valor_propina"] is not None else 0.0,
             estado=linha["estado"],
             notaFinal=float(linha["nota_final"]) if linha["nota_final"] is not None else None,
         )
+        matricula._aluno = AlunoRepository().obter_por_id(linha["aluno_id"])
+        matricula._turma = TurmaRepository().obter_por_id(linha["turma_id"])
+        return matricula

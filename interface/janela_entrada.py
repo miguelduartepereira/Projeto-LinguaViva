@@ -69,7 +69,11 @@ def criar_interface(janela):
             abrir_menu_secretaria(janela)
 
         elif escolha == "Professor":
-            print("Menu Professor")
+            from interface.menu_professor import MenuProfessorGUI
+
+            for widget in janela.winfo_children():
+                widget.destroy()
+            MenuProfessorGUI(janela)
 
         elif escolha == "Direção":
             from interface.menu_direcao import criar_menu_direcao
