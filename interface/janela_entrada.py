@@ -1,91 +1,62 @@
-
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 
-from interface.menu_direcao import criar_menu_direcao
+from repositories.utilizador_repository import UtilizadorRepository
+from services.auth_service import AuthService
+
+
+_auth_service = AuthService(UtilizadorRepository())
 
 
 def criar_interface(janela):
-
-    janela.title("LinguaViva")
-    janela.geometry("500x600")
+    janela.title("LinguaViva - Acesso")
+    janela.geometry("400x300")
     janela.resizable(False, False)
 
-    frame = ttk.LabelFrame(
-        janela,
-        text="LinguaViva — Centro de Línguas",
-        padding=25
-    )
-    frame.pack(
-        padx=30,
-        pady=80,
-        fill="both",
-        expand=True
-    )
+    tk.Label(janela, text="Utilizador:").pack(pady=(30, 2))
+    entry_user = tk.Entry(janela, width=30)
+    entry_user.pack()
 
-    titulo = ttk.Label(
-        frame,
-        text="Bem-vindo!",
-        font=("Arial", 20, "bold")
-    )
-    titulo.pack(pady=30)
-
-    perfil = ttk.Combobox(
-        frame,
-        values=[
-            "Secretaria",
-            "Professor",
-            "Direção",
-            "Encarregado"
-        ],
-        state="readonly",
-        width=25
-    )
-    perfil.pack(pady=10)
-
-    perfil.set("Selecione um perfil")
+    tk.Label(janela, text="Password:").pack(pady=(10, 2))
+    entry_pass = tk.Entry(janela, width=30, show="*")
+    entry_pass.pack()
 
     def entrar():
-
-        escolha = perfil.get()
-
-        if escolha not in [
-            "Secretaria",
-            "Professor",
-            "Direção",
-            "Encarregado"
-        ]:
-            messagebox.showwarning(
-                "Aviso",
-                "Selecione um perfil!"
-            )
+        login = entry_user.get().strip()
+        senha = entry_pass.get()
+        if not login or not senha:
+            messagebox.showwarning("LinguaViva", "Preencha todos os campos.")
             return
 
-        if escolha == "Secretaria":
-            from interface.menu_secretaria_gui import abrir_menu_secretaria
+        try:
+            utilizador = _auth_service.autenticar(login, senha)
+            token = _auth_service.criar_token(utilizador)
+            _abrir_menu_perfil(janela, utilizador._perfil, token)
+        except ValueError as erro:
+            messagebox.showerror("LinguaViva", str(erro))
+            entry_pass.delete(0, tk.END)
 
-            for widget in janela.winfo_children():
-                widget.destroy()
-            abrir_menu_secretaria(janela)
+    tk.Button(janela, text="Entrar", command=entrar, width=15).pack(pady=20)
+    entry_user.focus_set()
 
-        elif escolha == "Professor":
-            from interface.menu_professor import MenuProfessorGUI
 
-            for widget in janela.winfo_children():
-                widget.destroy()
-            MenuProfessorGUI(janela)
+def _abrir_menu_perfil(janela, perfil, token):
+    for widget in janela.winfo_children():
+        widget.destroy()
 
-        elif escolha == "Direção":
-            from interface.menu_direcao import criar_menu_direcao
+    # The token is retained on the window until the later RBAC work passes it
+    # to each protected service operation.
+    janela.token_sessao = token
+    perfil_normalizado = perfil.lower().replace("ç", "c").replace("ã", "a")
 
-            criar_menu_direcao(janela)
-
-        elif escolha == "Encarregado":
-            print("Menu Encarregado")
-
-    btn_entrar = ttk.Button(
-        frame,
-        text="Entrar",
-        command=entrar
-    )
-    btn_entrar.pack(pady=30)
+    if perfil_normalizado == "secretaria":
+        from interface.menu_secretaria_gui import abrir_menu_secretaria
+        abrir_menu_secretaria(janela)
+    elif perfil_normalizado == "professor":
+        from interface.menu_professor import MenuProfessorGUI
+        MenuProfessorGUI(janela)
+    elif perfil_normalizado == "direcao":
+        from interface.menu_direcao import criar_menu_direcao
+        criar_menu_direcao(janela)
+    else:
+        messagebox.showerror("LinguaViva", "Perfil de utilizador inválido.")
